@@ -1,24 +1,22 @@
 import { Request, Response } from "express";
 import { z } from 'zod'
 import { habitModel } from "../schemas/habit.model";
+import { buildValidationErrorMessage } from "../utils/build-validation-error-message.utils";
 
 export class HabitsController {
 	private readonly habits: any[] = [];
 	store = async (request: Request, response: Response): Promise<Response> => {
 		const schema = z.object({
 			name: z.string(),
+		
 		})
 
-		const { name } = request.body;
-
-		const habit = schema.safeParse({
-			name,
-		})
+		const habit = schema.safeParse(request.body)
 
 		if (!habit.success) {
-			return response.status(400).json({
-				message: "Error on validation."
-			});
+			const errors = buildValidationErrorMessage(habit.error.issues)
+
+			return response.status(422).json({ message: errors });
 		}
 
 		const findHabit = await habitModel.findOne({
