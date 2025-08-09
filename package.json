@@ -19,12 +19,13 @@
   "type": "commonjs",
   "description": "ApI para elite tracker",
   "devDependencies": {
-    "@biomejs/biome": "2.1.4",
+    "@biomejs/biome": "^2.1.4",
     "@types/express": "^5.0.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "biome": "^0.3.3",
     "express": "^5.1.0",
     "mongoose": "^8.17.1"
   }
