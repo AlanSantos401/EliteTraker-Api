@@ -13,3 +13,6 @@ routes.get("/", (request, response) => {
 });
 
 routes.post("/habits", habitsController.store);
+routes.get("/habits", habitsController.index);
+routes.delete("/habits/:id", habitsController.remove);
+routes.patch("/habits/:id/toggle", habitsController.toggle);
