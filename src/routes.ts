@@ -1,5 +1,4 @@
 import {  Router } from "express";
-
 import packageJson from "../package.json";
 import { HabitsController } from "./controllers/habits.controller";
 
