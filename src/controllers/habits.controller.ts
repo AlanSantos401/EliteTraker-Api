@@ -9,7 +9,6 @@ export class HabitsController {
 	store = async (request: Request, response: Response): Promise<Response> => {
 		const schema = z.object({
 			name: z.string(),
-
 		})
 
 		const habit = schema.safeParse(request.body)
@@ -116,9 +115,9 @@ export class HabitsController {
 		}
 
 		const habitUpdated = await habitModel.findOneAndUpdate(
-		{
-			_id: validated.data.id
-		}, {
+			{
+				_id: validated.data.id
+			}, {
 			$push: {
 				completedDates: now
 			}
