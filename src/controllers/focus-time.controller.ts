@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { request, Request, Response } from "express";
 import dayjs from "dayjs";
 import { z } from 'zod'
 import { buildValidationErrorMessage } from "../utils/build-validation-error-message.utils";
@@ -37,9 +37,38 @@ export class FocustimeController {
         return response.status(201).json(createdfocusTime)
     };
 
+    index = async (request: Request, response: Response) => {
+        const schema = z.object({
+            date: z.coerce.date(),
+        })
+
+        const validated = schema.safeParse(request.query)
+
+        if (!validated.success) {
+            const errors = buildValidationErrorMessage(validated.error.issues)
+
+            return response.status(422).json({ message: errors })
+        }
+
+        const startDate = dayjs(validated.data.date).startOf('day')
+        const endDate = dayjs(validated.data.date).endOf('day')
+
+        const focusTime = await focusTimeModel.find({
+            timeFrom: {
+                $gte: startDate.toDate(),
+                $lte: endDate.toDate()
+            },
+        }).sort({
+            timeFrom: 1,
+        })
+
+        return response.status(200).json(focusTime)
+    }
+
     metricsByMontch = async (request: Request, response: Response) => {
         const schema = z.object({
             date: z.coerce.date(),
+
         })
 
         const validated = schema.safeParse(request.query)
@@ -65,15 +94,15 @@ export class FocustimeController {
             month: {
                 $month: '$timeFrom',
             },
-             day: {
+            day: {
                 $dayOfMonth: '$timeFrom',
             }
-            }).group({
-                _id: ['$year', '$month', '$day'],
-                count: {
-                    $sum: 1,
-                }
-            }).sort({
+        }).group({
+            _id: ['$year', '$month', '$day'],
+            count: {
+                $sum: 1,
+            }
+        }).sort({
             _id: 1,
         })
 
