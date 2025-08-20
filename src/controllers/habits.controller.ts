@@ -1,7 +1,7 @@
 import { request, Request, Response } from "express";
 import dayjs from "dayjs";
 import { z } from 'zod'
-import { habitModel } from "../schemas/habit.model";
+import { habitModel } from "../models/habit.model";
 import { buildValidationErrorMessage } from "../utils/build-validation-error-message.utils";
 import mongoose from "mongoose";
 
@@ -11,6 +11,7 @@ export class HabitsController {
 		const schema = z.object({
 			name: z.string(),
 		})
+
 
 		const habit = schema.safeParse(request.body)
 
@@ -30,7 +31,8 @@ export class HabitsController {
 
 		const newHabit = await habitModel.create({
 			name: habit.data.name,
-			completedDates: []
+			completedDates: [],
+			userId: request.user.id
 		})
 
 		this.habits.push(newHabit);
@@ -39,7 +41,9 @@ export class HabitsController {
 	};
 
 	index = async (request: Request, response: Response) => {
-		const habits = await habitModel.find().sort({ name: 1 })
+		const habits = await habitModel.find({
+			userId: request.user.id
+		}).sort({ name: 1 })
 
 		return response.status(200).json(habits);
 	}
@@ -58,7 +62,8 @@ export class HabitsController {
 		}
 
 		const findHabit = await habitModel.findOne({
-			_id: habit.data.id
+			_id: habit.data.id,
+			userId: request.user.id
 		})
 
 		if (!findHabit) {
@@ -86,7 +91,8 @@ export class HabitsController {
 		}
 
 		const findHabit = await habitModel.findOne({
-			_id: validated.data.id
+			_id: validated.data.id,
+			userId: request.user.id
 		})
 
 		if (!findHabit) {
@@ -150,7 +156,8 @@ export class HabitsController {
 
 
 		const [habitMetrics] = await habitModel.aggregate().match({
-			_id: new mongoose.Types.ObjectId(validated.data.id)
+			_id: new mongoose.Types.ObjectId(validated.data.id),
+			userId: request.user.id,
 		}).project({
 			_id: 1,
 			name: 1,

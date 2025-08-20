@@ -2,7 +2,7 @@ import { request, Request, Response } from "express";
 import dayjs from "dayjs";
 import { z } from 'zod'
 import { buildValidationErrorMessage } from "../utils/build-validation-error-message.utils";
-import { focusTimeModel } from "../schemas/focus-time.models";
+import { focusTimeModel } from "../models/focus-time.models";
 
 export class FocustimeController {
 
@@ -32,6 +32,7 @@ export class FocustimeController {
         const createdfocusTime = await focusTimeModel.create({
             timeFrom: timeFrom.toDate(),
             timeTo: timeTo.toDate(),
+            userId: request.user.id,
         })
 
         return response.status(201).json(createdfocusTime)
@@ -58,6 +59,7 @@ export class FocustimeController {
                 $gte: startDate.toDate(),
                 $lte: endDate.toDate()
             },
+            userId: request.user.id,
         }).sort({
             timeFrom: 1,
         })
@@ -86,7 +88,8 @@ export class FocustimeController {
             timeFrom: {
                 $gte: startDate.toDate(),
                 $lte: endDate.toDate()
-            }
+            }, 
+            userId: request.user.id
         }).project({
             year: {
                 $year: '$timeFrom',
