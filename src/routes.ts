@@ -3,6 +3,7 @@ import packageJson from "../package.json";
 import { HabitsController } from "./controllers/habits.controller";
 import { FocustimeController } from "./controllers/focus-time.controller";
 import { AuthController } from "./controllers/autth.controller";
+import { authMiddleware } from "./middlewares/auth.middleware";
 
 
 export const routes = Router();
@@ -21,9 +22,12 @@ routes.get('/auth', authController.auth)
 
 routes.get('/auth/callback', authController.authCallback)
 
-routes.post("/habits", habitsController.store);
+
+routes.use(authMiddleware)
 
 routes.get("/habits", habitsController.index);
+
+routes.post("/habits", habitsController.store);
 
 routes.get("/habits/:id/metrics", habitsController.metrics);
 

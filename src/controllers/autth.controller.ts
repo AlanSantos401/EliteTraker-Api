@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import axios, { isAxiosError } from "axios";
+import jwt from 'jsonwebtoken';
 
-const { GITHUB_CLIENT_ID: clientId, GITHUB_CLIENT_SECRET: clientSecret } = process.env
+const { GITHUB_CLIENT_ID: clientId, GITHUB_CLIENT_SECRET: clientSecret, JWT_SECRET: secret,
+    JWT_EXPIRES_IN: expiresIn } = process.env
 
 export class AuthController {
     auth = async (request: Request, response: Response) => {
@@ -34,8 +36,12 @@ export class AuthController {
 
             const { node_id: id, avatar_url: avatarURL, name } = userDataResult.data
 
+            const token = jwt.sign({ id }, String(secret), {
+                expiresIn,
+            })
 
-            return response.status(200).json({ id, avatarURL, name })
+
+            return response.status(200).json({ id, avatarURL, name, token })
         } catch (err) {
             if (isAxiosError(err)) {
                 return response.status(400).json(err.response?.data)
