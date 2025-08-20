@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import axios, { isAxiosError } from "axios";
 
-const clientId = 'Ov23liSUncGKL3uG9NqF'
-const clientSecret = 'b1b87ca43014ad867980e6e252630874a3d45f63'
+const { GITHUB_CLIENT_ID: clientId, GITHUB_CLIENT_SECRET: clientSecret } = process.env
 
 export class AuthController {
     auth = async (request: Request, response: Response) => {
@@ -42,7 +41,7 @@ export class AuthController {
                 return response.status(400).json(err.response?.data)
             }
 
-            return response.status(500).json({ message: "Something went wrong."})
+            return response.status(500).json({ message: "Something went wrong." })
         }
     }
 }
