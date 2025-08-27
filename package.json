@@ -20,6 +20,7 @@
   "description": "ApI para elite tracker",
   "devDependencies": {
     "@biomejs/biome": "^2.1.4",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.10",
     "tsx": "^4.19.4",
@@ -28,6 +29,7 @@
   "dependencies": {
     "axios": "^1.11.0",
     "biome": "^0.3.3",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",

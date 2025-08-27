@@ -1,5 +1,9 @@
 import mongoose from 'mongoose'
 
+const {
+    MONGO_URL: mongoUrl
+} = process.env;
+
 export async function setupMongo() {
     try {
         if (mongoose.connection.readyState === 1) {
@@ -7,7 +11,7 @@ export async function setupMongo() {
         }
 
         console.log('🎲 Connecting to database...')
-        await mongoose.connect("mongodb://localhost:27017/elitetracker", {
+        await mongoose.connect(String(mongoUrl), {
             serverSelectionTimeoutMS: 3000,
         })
         console.log('✅ Database connected...')
